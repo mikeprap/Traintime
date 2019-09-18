@@ -24,8 +24,7 @@ $(document).ready(function (){
     var trainDestination;
     var trainFrequency;
     var firstTrain;
-    var nextArrival;
-    var trainMinutesAway;
+    
 
     // populate Firebase database with data
     // make an on click to capture and add values
@@ -62,7 +61,7 @@ $(document).ready(function (){
 
 
 
-    })
+    });
 
     database.ref().on("child_added", function (snap){
         console.log(snap.val());
@@ -72,6 +71,14 @@ $(document).ready(function (){
         var tFrequency = snap.val().dbtrainFrequency;
         var tFirstTrain = snap.val().dbfirstTrain;
         
+
+        var timeConverted = moment(tFirstTrain, "HH:mm").subtract(1, "years");
+        var currentTime = moment();
+        var diffTime = moment().diff(moment(timeConverted), "minutes");
+        var timeRemainder = diffTime % tFrequency;
+        var trainMinutesAway = tFrequency - timeRemainder;
+        var nextArrival = moment().add(trainMinutesAway, "minutes")
+
 // Next Arrival and Minutes Away Calcutaltions
 
 
@@ -83,8 +90,8 @@ $(document).ready(function (){
             "<td>"+ tName+ "</td>",
             "<td>"+ tDestination+ "</td>",
             "<td>"+ tFrequency+ "</td>",
-            "<td>+ to be calculated+ </td>",
-            "<td>+ to be calculated+ </td>",
+            "<td>"+ moment(nextArrival).format("hh:mm") + "</td>",
+            "<td>"+ trainMinutesAway + "</td>",
             
         )
 
